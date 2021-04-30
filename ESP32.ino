@@ -31,8 +31,8 @@ HTTPClient http;
 WiFiClient *stream;
 shoddyxml x(httpGetChar);
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 36000, 60000);
-
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 36000, 60000);
+const int   daylightOffset_sec = 3600;
 
 void foundXMLDeclOrEnd() {
 
@@ -57,16 +57,12 @@ void foundSTag(char *s, int numAttributes, attribute_t attributes[]) {
 void foundETag(char *s) {
   if ((itemDepth == 1) && (strcmp(s, contentsToDisplay) == 0)) {
     if (Serial2.available()) {
-      String s = Serial2.readString();
+      String s = Serial.readString();
       Serial.println(s);
       const char *cstr = s.c_str();
       if (strstr(cstr, "Update") != NULL) {
-        while (!timeClient.update()) {
-          timeClient.forceUpdate();
-        }
         String formattedDate;
         String dayStamp;
-
         formattedDate = timeClient.getFormattedDate();
         Serial2.println("TIMEUPDATE:" + formattedDate);
         Serial.println("TIMEUPDATE:" + formattedDate);
@@ -123,11 +119,11 @@ void setup() {
   x.foundCharacter = foundCharacter;
   x.foundElement = foundElement;
 
-  timeClient.begin();
+  // timeClient.begin();
 }
 
 void loop() {
- // timeClient.update();
+  // timeClient.update();
 
   for (int i = 0; i < sizeof(sites) / sizeof(struct site_t); i++) {
     if ((wifiMulti.run() == WL_CONNECTED)) {
