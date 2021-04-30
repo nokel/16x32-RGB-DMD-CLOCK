@@ -76,23 +76,19 @@ void setup() {
 
 void loop() {
   DateTime now = rtc.now();
-  int hourVal = now.hour() + 1;
-
-  if(Serial.available()){
-    Serial1.println("Update");
-    
-  }
+  int hourVal = now.hour();
+  
   if (millis() - timer > 30000) {
     int temperature = Thermister(analogRead(A3));
-    if (now.hour() > 12) {
-      str1 = String(hourVal - 12) + ":" + String(now.minute());
+    if(now.hour() > 12){
+      str1 = String(hourVal-12) + ":" + String(now.minute());
     }
     else {
       str1 = String(hourVal) + ":" + String(now.minute());
     }
     Serial.println(str1);
-    str2.replace("&#039;" , "'");
-    str2.replace("&apos;" , "'");
+str2.replace("&#039;" , "'");
+str2.replace("&apos;" , "'");
     str = daysOfTheWeek[now.dayOfTheWeek()] + String(now.day()) + mon[now.month() - 1] + String(now.year()) + " (" + String(temperature) + "C) " + str2;
     textMin       = str.length() * -12;
     textX         = matrix.width();
@@ -102,9 +98,8 @@ void loop() {
   if (Serial1.available()) {
     String x = Serial1.readString();
     const char *cstr = x.c_str();
-    if (strstr(cstr, "TIMEUPDATE:") != NULL) {
+    if (strstr(cstr, "TIMEUPDATE:") != NULL) {  
       String formattedDate = x.substring(11 , x.length() + 1);
-      Serial.println("Here");
       Serial.println(formattedDate);
       String dayStamp;
       //int splitT = formattedDate.indexOf("T");
@@ -120,7 +115,7 @@ void loop() {
       Serial.println(day);
       Serial.println(hour);
       Serial.println(min);
-
+      
       rtc.adjust(DateTime(year, month, day, hour, min , 0));
     }
     else
