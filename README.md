@@ -8,9 +8,8 @@ There are a few hiccups, but so far the clock can
 
   1. Display time
   2. Display date
-  3. Update time from NTP server
-  4. Display headlines from 3 RSS sources (although recently there's been a bug stopping this one from working)
-  5. display the local ip address through the serial monitor as a debug feature.
+  3. Update time from NTP server (although recently there's been a bug stopping this one from working 100%)
+  4. Display headlines from 3 RSS sources
 
 If you want the same setup as what I've currently got, it's comprised of 
   - Arduino Mega (https://www.jaycar.com.au/duinotech-mega-2560-r3-board-for-arduino/p/XC4420)
