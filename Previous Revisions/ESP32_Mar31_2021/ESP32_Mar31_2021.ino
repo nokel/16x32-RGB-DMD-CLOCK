@@ -1,4 +1,3 @@
-//31SMARCH2021
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <HTTPClient.h>
@@ -6,8 +5,8 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
-const char *ssid = "SSID";
-const char *password = "PASSWORD";
+const char * WIFI_SSID = "SSID";
+const char * WIFI_PASS = "PASS";
 
 const struct site_t {
   const char *title;
