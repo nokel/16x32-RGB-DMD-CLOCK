@@ -1,4 +1,3 @@
-//30APRIL2021
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <HTTPClient.h>
@@ -58,7 +57,7 @@ void foundSTag(char *s, int numAttributes, attribute_t attributes[]) {
 void foundETag(char *s) {
   if ((itemDepth == 1) && (strcmp(s, contentsToDisplay) == 0)) {
     if (Serial2.available()) {
-      String s = Serial.readString();
+      String s = Serial2.readString();
       Serial.println(s);
       const char *cstr = s.c_str();
       if (strstr(cstr, "Update") != NULL) {
@@ -110,6 +109,15 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Serial2.begin(9600, SERIAL_8N1, 16, 17);
+
+  
+  WiFi.begin(ssid, password);
+
+  while ( WiFi.status() != WL_CONNECTED ) {
+    delay ( 500 );
+    Serial.print ( "." );
+  }
+  
   wifiMulti.addAP(ssid, password);
   x.foundXMLDecl = foundXMLDeclOrEnd;
   x.foundXMLEnd = foundXMLDeclOrEnd;
@@ -120,14 +128,15 @@ void setup() {
   x.foundCharacter = foundCharacter;
   x.foundElement = foundElement;
 
-  // timeClient.begin();
+  timeClient.begin();
 }
 
 void loop() {
-  // timeClient.update();
+ 
 
   for (int i = 0; i < sizeof(sites) / sizeof(struct site_t); i++) {
     if ((wifiMulti.run() == WL_CONNECTED)) {
+      timeClient.update();
       itemDepth = 0;
       lastTagMatches = 0;
       //Serial.println(sites[i].title);
