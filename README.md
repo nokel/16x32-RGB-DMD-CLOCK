@@ -1,4 +1,4 @@
-<blockquote class="imgur-embed-pub" lang="en" data-id="a/kddm7nA" data-context="false" ><a href="//imgur.com/a/kddm7nA"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+For a video of operation, follow this link: https://imgur.com/a/kddm7nA
 
 16x32 Pixel RGB Dot matrix clock that displays date, temperature, and news headlines
 
