@@ -1,8 +1,7 @@
-//30APRIL2021
 #include <math.h>
 #include "RTClib.h"
 #include <RGBmatrixPanel.h>
-
+#include <NTPClient.h>
 RTC_DS3231 rtc;
 
 String daysOfTheWeek[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -69,7 +68,7 @@ void setup() {
     Serial.println("RTC lost power, let's set the time!");
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
-  str1 = String(now.hour()) + ":" + String(now.minute());
+  str1 = String(now.hour()+1) + ":" + String(now.minute());
   str =  daysOfTheWeek[now.dayOfTheWeek()] + String(now.day()) + mon[now.month() - 1] + String(now.year());
   textMin       = str.length() * -12;
   textX         = matrix.width();
@@ -77,19 +76,19 @@ void setup() {
 
 void loop() {
   DateTime now = rtc.now();
-  int hourVal = now.hour();
-  
+  int hourVal = now.hour()+1 ;
+
   if (millis() - timer > 30000) {
     int temperature = Thermister(analogRead(A3));
-    if(now.hour() > 12){
-      str1 = String(hourVal-12) + ":" + String(now.minute());
+    if (now.hour() > 12) {
+      str1 = String(hourVal - 12) + ":" + String(now.minute());
     }
     else {
       str1 = String(hourVal) + ":" + String(now.minute());
     }
-    Serial.println(str1);
-str2.replace("&#039;" , "'");
-str2.replace("&apos;" , "'");
+    //Serial.println(str1);
+    str2.replace("&#039;" , "'");
+    str2.replace("&apos;" , "'");
     str = daysOfTheWeek[now.dayOfTheWeek()] + String(now.day()) + mon[now.month() - 1] + String(now.year()) + " (" + String(temperature) + "C) " + str2;
     textMin       = str.length() * -12;
     textX         = matrix.width();
@@ -99,8 +98,11 @@ str2.replace("&apos;" , "'");
   if (Serial1.available()) {
     String x = Serial1.readString();
     const char *cstr = x.c_str();
-    if (strstr(cstr, "TIMEUPDATE:") != NULL) {  
-      String formattedDate = x.substring(11 , x.length() + 1);
+    if (strstr(cstr, "TIMEUPDATE:") != NULL) {
+      int ind = x.indexOf("TIMEUPDATE:")+11;
+      x.remove(0 , ind);
+      String formattedDate = x.substring(0 , 20);
+      Serial.println("Time");
       Serial.println(formattedDate);
       String dayStamp;
       //int splitT = formattedDate.indexOf("T");
@@ -111,20 +113,21 @@ str2.replace("&apos;" , "'");
       int day = dayStamp.substring(8 , 10).toInt();
       int hour = dayStamp.substring(11, 13).toInt();
       int min = dayStamp.substring(14 , 16).toInt();
+      Serial.println("Time");
       Serial.println(year);
       Serial.println(month);
       Serial.println(day);
       Serial.println(hour);
       Serial.println(min);
-      
+
       rtc.adjust(DateTime(year, month, day, hour, min , 0));
     }
     else
       str2 = x;
   }
 
-  if (millis() - upTimer > 43200000) {
-    Serial1.println("Update");
+  if (millis() - upTimer > 86400000) {
+    Serial1.println("Send Update");
     upTimer = millis();
   }
 
